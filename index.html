@@ -57,59 +57,6 @@
         <div class="container">
             <h2>Наша продукция</h2>
             <div class="product-grid">
-                <!-- Продукт 1 -->
-                <div class="product-card">
-                    <div class="product-image">
-                        <img src="https://images.unsplash.com/photo-1517677208171-0bc6725a3e60?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80" alt="Арматура">
-                    </div>
-                    <div class="product-info">
-                        <h3>Арматура А500С</h3>
-                        <p>Диаметр: 8-32 мм</p>
-                        <div class="product-price">от 52 000 ₽/т</div>
-                        <a href="#" class="btn">Подробнее</a>
-                    </div>
-                </div>
-
-                <!-- Продукт 2 -->
-                <div class="product-card">
-                    <div class="product-image">
-                        <img src="https://images.unsplash.com/photo-1517673132405-a56a62b18caf?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80" alt="Трубы">
-                    </div>
-                    <div class="product-info">
-                        <h3>Трубы стальные</h3>
-                        <p>Диаметр: 15-1020 мм</p>
-                        <div class="product-price">от 68 000 ₽/т</div>
-                        <a href="#" class="btn">Подробнее</a>
-                    </div>
-                </div>
-
-                <!-- Продукт 3 -->
-                <div class="product-card">
-                    <div class="product-image">
-                        <img src="https://images.unsplash.com/photo-1579621970563-ebec7560ff3e?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80" alt="Лист">
-                    </div>
-                    <div class="product-info">
-                        <h3>Лист горячекатаный</h3>
-                        <p>Толщина: 1-160 мм</p>
-                        <div class="product-price">от 58 000 ₽/т</div>
-                        <a href="#" class="btn">Подробнее</a>
-                    </div>
-                </div>
-
-                <!-- Продукт 4 -->
-                <div class="product-card">
-                    <div class="product-image">
-                        <img src="https://images.unsplash.com/photo-1597852074816-d933c7d2b988?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80" alt="Уголок">
-                    </div>
-                    <div class="product-info">
-                        <h3>Уголок стальной</h3>
-                        <p>Размеры: 25x25 - 200x200 мм</p>
-                        <div class="product-price">от 55 000 ₽/т</div>
-                        <a href="#" class="btn">Подробнее</a>
-                    </div>
-                </div>
-
-
             </div>
         </div>
     </section>
@@ -243,5 +190,43 @@
             </div>
         </div>
     </footer>
+   <script>
+const sheetID = "1kUUJ51TDZ5MCqBcGw-Dwr2I3MsaMCjIlNrinSMmYR_Y"; // замени на свой
+const sheetName = "Лист1"; // имя вкладки
+const url = `https://docs.google.com/spreadsheets/d/${sheetID}/gviz/tq?tqx=out:json&sheet=${sheetName}`;
+
+fetch(url)
+  .then(res => res.text())
+  .then(data => {
+    // Google возвращает "мусор" вокруг JSON, его надо обрезать
+    const json = JSON.parse(data.substr(47).slice(0, -2));
+    const rows = json.table.rows;
+
+    const productGrid = document.querySelector(".product-grid");
+    productGrid.innerHTML = ""; // очищаем
+
+    rows.forEach(row => {
+      const name = row.c[0]?.v || "Без названия";
+      const price = row.c[1]?.v || "Цена не указана";
+      const img = row.c[2]?.v || "https://via.placeholder.com/300";
+
+      const card = document.createElement("div");
+      card.className = "product-card";
+      card.innerHTML = `
+        <div class="product-image">
+          <img src="${img}" alt="${name}">
+        </div>
+        <div class="product-info">
+          <h3>${name}</h3>
+          <div class="product-price">${price}</div>
+          <a href="#" class="btn">Подробнее</a>
+        </div>
+      `;
+      productGrid.appendChild(card);
+    });
+  })
+  .catch(err => console.error("Ошибка загрузки Google Sheets:", err));
+</script>
+
 </body>
 </html>
